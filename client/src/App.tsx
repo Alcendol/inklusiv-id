@@ -1,10 +1,29 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from "react";
+import reactLogo from "./assets/react.svg";
+import viteLogo from "/vite.svg";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
+  const [data, setData] = useState<string | null>(null);
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch("http://localhost:8080");
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const result = await response.text();
+      setData(result);
+    } catch (error) {
+      console.error("Fetch error:", error);
+    }
+  };
+
+  // Call fetchData on component mount
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <>
@@ -28,8 +47,18 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
+
+      {/* Display fetched data */}
+      {data ? (
+        <div>
+          <h2>Fetched Data:</h2>
+          <pre>{data}</pre>
+        </div>
+      ) : (
+        <p>Loading data...</p>
+      )}
     </>
-  )
+  );
 }
 
-export default App
+export default App;
