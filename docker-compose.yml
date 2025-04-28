@@ -1,0 +1,36 @@
+services:
+  client:
+    build:
+      context: "./client"
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server
+
+  server:
+    build:
+      context: "./server"
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=admin
+      - DB_PASSWORD=admin
+      - DB_NAME=inklusiv_id
+    depends_on:
+      - db
+  db:
+    image: postgres:17.4
+    ports:
+      - "5432:5432"
+    environment:
+      - DB_NAME=inklusiv_id
+      - DB_USER=admin
+      - DB_PASSWORD=admin
+    volumes:
+      - db-data:/var/lib/postgresql/data
+  volumes:
+    db-data:
